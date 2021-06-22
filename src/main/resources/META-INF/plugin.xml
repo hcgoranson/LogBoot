@@ -1,0 +1,22 @@
+<idea-plugin>
+    <id>one.goranson.logboot</id>
+    <name>LogBoot</name>
+    <vendor email="logboot@goranson.one" url="goranson.one">goranson.one</vendor>
+
+    <description><![CDATA[
+    The <b>LogBoot</b> plugin provides a simple way to view and edit log
+    levels for a Spring Boot application.<br><br>
+    The plugin is essentially a UI wrapper over the Spring Boot actuator log API.
+    See more at https://github.com/hcgoranson/LogBoot
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="one.goranson.logboot.InitPlugin" id="LogBoot" anchor="bottom"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
