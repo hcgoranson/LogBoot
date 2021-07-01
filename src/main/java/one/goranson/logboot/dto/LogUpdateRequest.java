@@ -14,6 +14,7 @@ public class LogUpdateRequest {
 
   @Builder
   @ToString
+  @Getter
   public static class Body {
     @JsonProperty("configuredLevel")
     private String level;

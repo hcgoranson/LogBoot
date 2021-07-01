@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.content.ContentFactory;
+import one.goranson.logboot.client.LogClient;
 import one.goranson.logboot.ui.LogTableModel;
 import one.goranson.logboot.service.LogService;
 import one.goranson.logboot.ui.LogTableView;
@@ -19,7 +20,7 @@ public class InitPlugin implements ToolWindowFactory {
   private final LogService logService;
 
   public InitPlugin() {
-    this.logService = new LogService();
+    this.logService = new LogService(new LogClient());
   }
 
   @Override

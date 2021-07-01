@@ -1,6 +1,5 @@
 package one.goranson.logboot.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -14,12 +13,12 @@ public class LogService {
 
   private final LogClient logClient;
 
-  public LogService() {
-    this.logClient = new LogClient();
+  public LogService(LogClient logClient) {
+    this.logClient = logClient;
   }
 
-  public List<LogItem> fetchLogs(String host, String filter, boolean userCache) throws Exception {
-    var logItems = logClient.getLogs(rewriteHostname(host), userCache);
+  public List<LogItem> fetchLogs(String host, String filter, boolean useCache) throws Exception {
+    var logItems = logClient.getLogs(rewriteHostname(host), useCache);
 
     return logItems.stream()
         .filter(filterLogItems(filter))

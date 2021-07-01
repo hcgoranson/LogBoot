@@ -36,6 +36,10 @@ public class LogTableView extends TableView<LogItem> {
         if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseEvent.BUTTON1) {
           JTable source = (JTable) mouseEvent.getSource();
           int rowAtPoint = source.rowAtPoint(mouseEvent.getPoint());
+          if (rowAtPoint == -1) {
+            // There are no rows visible, do not continue
+            return;
+          }
           var logger = (String) LogTableView.this.getValueAt(rowAtPoint, 0);
           var level = (String) LogTableView.this.getValueAt(rowAtPoint, 1);
           var dialog = new UpdateLogDialog(logger, level);

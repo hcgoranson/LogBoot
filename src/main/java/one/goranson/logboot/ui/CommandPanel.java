@@ -1,10 +1,14 @@
 package one.goranson.logboot.ui;
 
+import static com.google.common.base.Throwables.getRootCause;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.ConnectException;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.SSLException;
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.icons.AllIcons;
@@ -23,6 +27,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import lombok.extern.slf4j.Slf4j;
 import one.goranson.logboot.dto.LogItem;
+import one.goranson.logboot.exception.CommunicationException;
 import one.goranson.logboot.service.LogService;
 
 @Slf4j
@@ -123,21 +128,41 @@ public class CommandPanel extends NonOpaquePanel {
   public void searchLogItems(boolean userCache) {
     List<LogItem> logItems = new ArrayList<>();
     errorLabel.setText("");
-    Exception exception = null;
     try {
-      logItems = logService.fetchLogs(hostField.getText(), filterField.getText(), userCache);
-    } catch (Exception e) {
-      exception = e;
-    }
-
-    if (exception != null) {
-      this.logTableView.getEmptyText()
-          .setText("Failed to fetch logs due to: " + exception.getMessage());
-    } else if (logItems.isEmpty()) {
-      this.logTableView.getEmptyText().setText("No results found for your search criteria");
+      logItems = logService.fetchLogs(hostField.getText(), filterField.getText().trim(), userCache);
+      if (logItems.isEmpty()) {
+        this.logTableView.getEmptyText().setText("No results found for your search criteria");
+      }
+    } catch (Exception exception) {
+      handleSearchException(exception);
     }
     this.logTableModel.setItems(logItems);
     this.logTableView.updateColumnSizes();
+  }
+
+  private void handleSearchException(Exception exception) {
+    exception.printStackTrace();
+    var errorMessage = "Something bad happen \uD83D\uDE14 (error message: "
+                       + exception.getMessage() + ").";
+    var rootException = getRootCause(exception);
+    if (rootException instanceof UnresolvedAddressException) {
+      errorMessage = "\uD83D\uDD8A️ Could not fetch logs, please enter a valid hostname";
+    } else if (rootException instanceof IllegalArgumentException) {
+      errorMessage = "\uD83D\uDD8A️ Could not fetch logs, " + rootException.getMessage();
+    } else if (exception.getCause() != null &&
+               exception.getCause().getCause() instanceof SSLException) {
+      errorMessage = "\uD83D\uDD12 Could not fetch logs, problem with https? (error message: "
+                     + exception.getCause().getCause().getMessage() + ").";
+    } else if (exception.getCause() instanceof ConnectException) {
+      errorMessage =
+          "\uD83E\uDD37 Could not fetch logs, check that the hostname is correct and the server "
+          + "is running on the given port";
+    } else if (exception.getCause() instanceof CommunicationException) {
+      errorMessage = exception.getCause().getMessage();
+    } else {
+      errorMessage = "Failed to perform the operation: " + exception.getMessage();
+    }
+    this.logTableView.getEmptyText().setText(errorMessage);
   }
 
   public class RefreshAction extends DumbAwareAction {
@@ -147,7 +172,7 @@ public class CommandPanel extends NonOpaquePanel {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      CommandPanel.this.searchLogItems(true);
+      CommandPanel.this.searchLogItems(false);
     }
   }
 

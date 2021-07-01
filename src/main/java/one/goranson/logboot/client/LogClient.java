@@ -1,11 +1,13 @@
 package one.goranson.logboot.client;
 
+import static java.lang.String.format;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import one.goranson.logboot.dto.LogItem;
 import one.goranson.logboot.dto.LogResponse;
 import one.goranson.logboot.dto.LogUpdateRequest;
+import one.goranson.logboot.exception.CommunicationException;
 
 @Slf4j
 public class LogClient {
@@ -53,27 +56,63 @@ public class LogClient {
   }
 
   public void updateLog(String host, LogUpdateRequest body) throws Exception {
-    var url = String.format("%s/actuator/loggers/%s", host, body.getLogger());
+    var url = format("%s/actuator/loggers/%s", host, body.getLogger());
     var request = HttpRequest.newBuilder()
         .uri(URI.create(url))
         .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body.getBody())))
         .header("Content-Type", "application/json")
         .build();
-
-    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    validateResponse(response);
   }
 
   private List<LogItem> getLogs(String host) throws IOException, InterruptedException {
-    var url = String.format("%s/actuator/loggers", host);
+    var url = format("%s/actuator/loggers", host);
     var request = HttpRequest.newBuilder()
         .GET()
         .uri(URI.create(url))
         .build();
     var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    validateResponse(response);
     var logResponse = objectMapper.readValue(response.body(), LogResponse.class);
+    if (logResponse.getLoggers() == null) {
+      return Collections.EMPTY_LIST;
+    }
+
     return logResponse.getLoggers().entrySet().stream()
         .map(entry -> new LogItem(entry.getKey(), entry.getValue().getLevel()))
         .collect(Collectors.toList());
+  }
+
+  private void validateResponse(HttpResponse<String> response) {
+
+    if (response == null) {
+      throw new CommunicationException("Server did not respond, check that the server is running correctly.");
+    }
+
+    var status = response.statusCode();
+    if (status >= 200 && status <= 299) {
+      return;
+    } else if (status == 404) {
+      var message =
+          format("\uD83E\uDD37 Endpoint %s %s returned status 404, check that the server exposes the log endpoint",
+              response.request().method(), response.request().uri().toString());
+      throw new CommunicationException(message);
+    } else if (status >= 400 && status <= 499) {
+      var message =
+          format("\uD83E\uDD37 Endpoint %s %s returned status %s, check that the server is running correctly ",
+              status,
+              response.request().method(),
+              response.request().uri().toString());
+      throw new CommunicationException(message);
+    } else if (status >= 500 && status <= 599) {
+      var message =
+          format("\uD83E\uDD37 Endpoint %s %s returned status %s, check that the server is running correctly ",
+              status,
+              response.request().method(),
+              response.request().uri().toString());
+      throw new CommunicationException(message);
+    }
   }
 
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'one.goranson'
-version '1.0'
+version '1.1'
 
 repositories {
     mavenCentral()
@@ -16,8 +16,11 @@ dependencies {
 
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
 
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.20.2'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.11.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -27,7 +30,9 @@ intellij {
 patchPluginXml {
     changeNotes """
       <b>1.0</b> <br>
-      - Initial release
+      - Initial release <br>
+      <b>1.1</b> <br>
+      - Improve error handling
       """
 }
 test {
