@@ -4,6 +4,10 @@ This is an IntelliJ plugin to view and change loglevel on a Spring Boot applicat
 
 The plugin utilizes the Spring Boot actuator log API. All you need to do is to enter the hostname and port of your Spring Boot application, and you are ready to go!
 
+
+https://user-images.githubusercontent.com/16962903/125358090-c5d35f00-e368-11eb-9b04-24069c1a6fde.mov
+
+
 ![plugin](./readme/logboot.png)
 ---
 ## Usage
