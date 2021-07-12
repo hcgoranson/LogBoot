@@ -29,7 +29,7 @@ public class LogTableView extends TableView<LogItem> {
     this.setStriped(true);
     this.setCursor(new Cursor(Cursor.HAND_CURSOR));
     this.setAutoCreateRowSorter(true);
-    this.getEmptyText().setText("Enter hostname and fetch logs!");
+    this.getEmptyText().setText("\uD83D\uDC4B Enter hostname + port an press enter!");
     this.addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent mouseEvent) {
