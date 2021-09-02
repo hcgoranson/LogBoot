@@ -43,11 +43,12 @@ public class LogService {
     if (Strings.isNullOrEmpty(filter)) {
       return item -> true;
     }
+    var filterLowerCase = filter.toLowerCase();
     return logItem -> logItem.getLogger()
                           .toLowerCase()
-                          .contains(filter)
+                          .contains(filterLowerCase)
                       || logItem.getLevel()
                           .toLowerCase()
-                          .contains(filter);
+                          .contains(filterLowerCase);
   }
 }
