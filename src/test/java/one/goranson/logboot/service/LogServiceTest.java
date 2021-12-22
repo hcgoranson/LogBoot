@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import one.goranson.logboot.client.LogClient;
 import one.goranson.logboot.dto.LogItem;
 import one.goranson.logboot.dto.LogUpdateRequest;
+import one.goranson.logboot.dto.Loggers;
 
 @ExtendWith(MockitoExtension.class)
 class LogServiceTest {
@@ -41,7 +42,8 @@ class LogServiceTest {
         .logger("one.goranson.logboot")
         .level("INFO")
         .build());
-    given(logClient.getLogs(url, false)).willReturn(expectedLogList);
+    given(logClient.getLogs(url, false))
+        .willReturn(Loggers.builder().logItems(expectedLogList).build());
 
     // When
     var actual = logService.fetchLogs(HOSTNAME, null, false);

@@ -53,7 +53,8 @@ class LogClientTest {
                                       + "}"));
 
     // When
-    var logItems = logClient.getLogs(mockWebServer.url("/").toString(), false);
+    var loggers = logClient.getLogs(mockWebServer.url("/").toString(), false);
+    var logItems = loggers.getLogItems();
 
     // Then
     then(logItems).isNotNull();
