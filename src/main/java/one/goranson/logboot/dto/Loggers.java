@@ -1,7 +1,6 @@
 package one.goranson.logboot.dto;
 
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +14,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class LogItem {
-  private String logger;
-  private String level;
+public class Loggers {
   private List<String> levelRanges;
+  private List<LogItem> logItems;
 }

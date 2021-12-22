@@ -1,10 +1,12 @@
 package one.goranson.logboot.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import com.google.common.base.Strings;
+import lombok.Getter;
 import one.goranson.logboot.client.LogClient;
 import one.goranson.logboot.dto.LogItem;
 import one.goranson.logboot.dto.LogUpdateRequest;
@@ -13,14 +15,17 @@ public class LogService {
 
   private final LogClient logClient;
 
+  @Getter
+  private List<String> levelRanges = Collections.EMPTY_LIST;
+
   public LogService(LogClient logClient) {
     this.logClient = logClient;
   }
 
   public List<LogItem> fetchLogs(String host, String filter, boolean useCache) throws Exception {
-    var logItems = logClient.getLogs(rewriteHostname(host), useCache);
-
-    return logItems.stream()
+    var loggers = logClient.getLogs(rewriteHostname(host), useCache);
+    this.levelRanges = loggers.getLevelRanges();
+    return loggers.getLogItems().stream()
         .filter(filterLogItems(filter))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());

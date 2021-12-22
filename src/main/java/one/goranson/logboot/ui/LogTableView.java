@@ -34,28 +34,42 @@ public class LogTableView extends TableView<LogItem> {
       @Override
       public void mousePressed(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseEvent.BUTTON1) {
-          JTable source = (JTable) mouseEvent.getSource();
-          int rowAtPoint = source.rowAtPoint(mouseEvent.getPoint());
-          if (rowAtPoint == -1) {
-            // There are no rows visible, do not continue
-            return;
-          }
-          var logger = (String) LogTableView.this.getValueAt(rowAtPoint, 0);
-          var level = (String) LogTableView.this.getValueAt(rowAtPoint, 1);
-          var dialog = new UpdateLogDialog(logger, level);
-          dialog.show();
-          if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            var logItem = dialog.getLogItem();
-            try {
-              logService.updateLog(commandPanel.getHost(), logItem);
-              commandPanel.searchLogItems(false);
-            } catch (Exception e) {
-              commandPanel.getErrorLabel().setErrorText("Failed to update log due to: " + e.getMessage(), Color.red);
-              e.printStackTrace();
-            }
+          handleDoubleClick(mouseEvent);
+        } else {
+          super.mousePressed(mouseEvent);
+        }
+      }
+
+      private boolean handleDoubleClick(MouseEvent mouseEvent) {
+        JTable source = (JTable) mouseEvent.getSource();
+        int rowAtPoint = source.rowAtPoint(mouseEvent.getPoint());
+        if (rowAtPoint == -1) {
+          // There are no rows visible, do not continue
+          return true;
+        }
+
+        // Fetch current select values
+        var logger = (String) LogTableView.this.getValueAt(rowAtPoint, 0);
+        var level = (String) LogTableView.this.getValueAt(rowAtPoint, 1);
+
+        // Create and show the update popup
+        var dialog = new UpdateLogDialog(logger, level, logService.getLevelRanges());
+        dialog.show();
+
+        // Handle the outcome of the popup
+        if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+          var logItem = dialog.getLogItem();
+          try {
+            // Use the updated value and invoke the remote service to set the new value
+            logService.updateLog(commandPanel.getHost(), logItem);
+            // Read all updated log levels from remote service
+            commandPanel.searchLogItems(false);
+          } catch (Exception e) {
+            commandPanel.getErrorLabel().setErrorText("Failed to update log due to: " + e.getMessage(), Color.red);
+            e.printStackTrace();
           }
         }
-        super.mousePressed(mouseEvent);
+        return false;
       }
     });
   }

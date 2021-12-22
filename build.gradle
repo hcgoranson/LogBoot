@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'one.goranson'
-version '1.3'
+version '1.4'
 
 java {
     toolchain {
@@ -42,7 +42,9 @@ patchPluginXml {
       <b>1.2</b> <br>
       - Make plugin future compatible <br> 
       <b>1.3</b> <br>
-      - Bump supported version to 2.13* <br> 
+      - Bump supported version to 2.13* <br>
+      <b>1.4</b> <br>
+      - Add update level drop down with current range fetched from app <br>  
       """
 }
 test {

@@ -8,7 +8,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -20,12 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import one.goranson.logboot.dto.LogItem;
 import one.goranson.logboot.dto.LogResponse;
 import one.goranson.logboot.dto.LogUpdateRequest;
+import one.goranson.logboot.dto.Loggers;
 import one.goranson.logboot.exception.CommunicationException;
 
 @Slf4j
 public class LogClient {
   private final HttpClient httpClient;
-  private final LoadingCache<String, List<LogItem>> logCache;
+  private final LoadingCache<String, Loggers> logCache;
   private final ObjectMapper objectMapper;
 
   public LogClient() {
@@ -39,7 +39,7 @@ public class LogClient {
         .expireAfterAccess(60, TimeUnit.SECONDS)
         .build(
             new CacheLoader<>() {
-              public List<LogItem> load(String host) throws IOException, InterruptedException {
+              public Loggers load(String host) throws IOException, InterruptedException {
                 return getLogs(host);
               }
             }
@@ -48,7 +48,7 @@ public class LogClient {
     this.objectMapper = new ObjectMapper();
   }
 
-  public List<LogItem> getLogs(String host, boolean useCache) throws ExecutionException {
+  public Loggers getLogs(String host, boolean useCache) throws ExecutionException {
     if (!useCache) {
       logCache.refresh(host);
     }
@@ -66,7 +66,7 @@ public class LogClient {
     validateResponse(response);
   }
 
-  private List<LogItem> getLogs(String host) throws IOException, InterruptedException {
+  private Loggers getLogs(String host) throws IOException, InterruptedException {
     var url = format("%s/actuator/loggers", host);
     var request = HttpRequest.newBuilder()
         .GET()
@@ -76,12 +76,22 @@ public class LogClient {
     validateResponse(response);
     var logResponse = objectMapper.readValue(response.body(), LogResponse.class);
     if (logResponse.getLoggers() == null) {
-      return Collections.EMPTY_LIST;
+      return Loggers.builder()
+          .levelRanges(Collections.EMPTY_LIST)
+          .logItems(Collections.EMPTY_LIST)
+          .build();
     }
 
-    return logResponse.getLoggers().entrySet().stream()
-        .map(entry -> new LogItem(entry.getKey(), entry.getValue().getLevel()))
+    var levels = logResponse.getLevels();
+
+    var logItems = logResponse.getLoggers().entrySet().stream()
+        .map(entry -> new LogItem(entry.getKey(), entry.getValue().getLevel(), levels))
         .collect(Collectors.toList());
+
+    return Loggers.builder()
+        .levelRanges(logResponse.getLevels())
+        .logItems(logItems)
+        .build();
   }
 
   private void validateResponse(HttpResponse<String> response) {

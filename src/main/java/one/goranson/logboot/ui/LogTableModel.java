@@ -41,8 +41,7 @@ public class LogTableModel extends ListTableModel<LogItem> {
             public TableCellRenderer getCustomizedRenderer(LogItem o, TableCellRenderer renderer) {
               switch (eachColumn) {
                 case "Level":
-                  return (table, value, isSelected, hasFocus, row, column) -> new BoldLabel(
-                      value.toString());
+                  return (table, value, isSelected, hasFocus, row, column) -> new BoldLabel(value.toString());
                 default:
                   return super.getCustomizedRenderer(o, renderer);
               }
