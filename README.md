@@ -41,4 +41,3 @@ Run IntelliJ in dev mode with `./gradlew runIde`
 ####  📦 Package
 Package a zip file with `./gradlew assemble`  
 Zip file can be found in `build/distributions`
-

@@ -20,5 +20,5 @@
         <!-- Add your actions here -->
     </actions>
 
-    <idea-version since-build="193" until-build="213.*"/>
+    <idea-version since-build="221" until-build="221.*"/>
 </idea-plugin>
