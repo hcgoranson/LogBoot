@@ -33,11 +33,11 @@ https://user-images.githubusercontent.com/16962903/125358090-c5d35f00-e368-11eb-
 
 
 ## Build & Package
-Make sure Java 11+  and Gradle is installed  
+Make sure Java 17+ and Gradle is installed  
 #### 🔨Build
 Clone this repo to your desktop and run `./gradlew build` to build the project  
 ####  🕹 Run
 Run IntelliJ in dev mode with `./gradlew runIde`
 ####  📦 Package
 Package a zip file with `./gradlew assemble`  
-Zip file can be found in `build/distributions`
+Zip file can be found in `libs`

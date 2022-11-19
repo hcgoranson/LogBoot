@@ -1,6 +1,7 @@
 package one.goranson.logboot;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -10,11 +11,11 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.content.ContentFactory;
 import one.goranson.logboot.client.LogClient;
-import one.goranson.logboot.ui.LogTableModel;
 import one.goranson.logboot.service.LogService;
-import one.goranson.logboot.ui.LogTableView;
 import one.goranson.logboot.ui.CommandPanel;
+import one.goranson.logboot.ui.LogTableModel;
 import one.goranson.logboot.ui.LogTablePanel;
+import one.goranson.logboot.ui.LogTableView;
 
 public class InitPlugin implements ToolWindowFactory {
   private final LogService logService;

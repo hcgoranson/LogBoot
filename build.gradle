@@ -1,14 +1,14 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.6.0'
+    id 'org.jetbrains.intellij' version '1.10.0'
 }
 
 group 'one.goranson'
-version '1.5'
+version '1.6'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -32,13 +32,13 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     updateSinceUntilBuild = false
-    version = '2022.1.2'
+    version = '2022.2.3'
 }
 
 patchPluginXml {
     changeNotes = """
-      <b>1.5</b> <br>
-      - Support for IntelliJ 2022.1 <br>  
+      <b>1.6</b> <br>
+      - Support for IntelliJ 2022.2.3 <br>  
       """
 }
 test {
