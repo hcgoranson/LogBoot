@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'one.goranson'
-version '1.6'
+version '1.7'
 
 java {
     toolchain {
@@ -32,13 +32,13 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     updateSinceUntilBuild = false
-    version = '2022.2.3'
+    version = '2022.3.2'
 }
 
 patchPluginXml {
     changeNotes = """
-      <b>1.6</b> <br>
-      - Support for IntelliJ 2022.2.3 <br>  
+      <b>1.7</b> <br>
+      - Support for IntelliJ 2022.3.2 <br>  
       """
 }
 test {

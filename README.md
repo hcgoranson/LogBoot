@@ -40,4 +40,4 @@ Clone this repo to your desktop and run `./gradlew build` to build the project
 Run IntelliJ in dev mode with `./gradlew runIde`
 ####  📦 Package
 Package a zip file with `./gradlew assemble`  
-Zip file can be found in `libs`
+Zip file can be found in `build/libs`
